@@ -29,7 +29,7 @@ const LoginQuery = gql`
 
 export default {
   created: function() {
-
+    debugger;
   },
   data: function() {
     return {
@@ -39,60 +39,23 @@ export default {
   methods: {
     login() {
       try {
-        this.$apollo.mutate({
-          mutation: LoginQuery,
-          variables: { email: "aaron1", password: "password" },
-          update: (store, { data: { signinUser } }) => {
-            console.log("in update: signinUser " + JSON.stringify({ ...signinUser }, 2));
-            console.log("in update: store", store);
+        this.$apollo
+          .mutate({
+            mutation: LoginQuery,
+            variables: { email: "aaron1", password: "password" }
+          })
+          .then(({ data: { signinUser } }) => {
+            debugger;
+            console.log(signinUser);
             this.user = {
               email: signinUser.user.email,
               token: signinUser.token
             };
-          },
-          optimisticResponse: {}
-        });
+          });
       } catch (e) {
         console.error("mutation error", e);
       }
     }
-  },
-  computed: {
-    // here we filter the results of the query to get
-    // just a subset of the elements
-    filteredRates() {
-      console.log("in filteredRates");
-      if (!this.rates) return [];
-      return this.rates.rates.filter(
-        ({ currency }) =>
-          currency !== this.currentCurrency &&
-          ["USD", "BTC", "LTC", "EUR", "JPY", "ETH"].indexOf(currency) !== -1
-      );
-    }
-  },
-  apollo: {
-    // variable to hold results of query..
-    // rates: {
-    //   // see the actual query below...
-    //   query: ExchangeRateQuery,
-    //   // this is how we pass in the specific parameter
-    //   // for the query to use
-    //   variables() {
-    //     return { currency: "BTC" };
-    //   },
-    //   error(error) {
-    //     console.log("apollo", error);
-    //   },
-    //   // this is where we track the loading state which
-    //   // is used to determine if we should show indicator
-    //   // of not
-    //   watchLoading(isLoading, countModifier) {
-    //     // isLoading is a boolean
-    //     // countModifier is either 1 or -1
-    //     console.log(isLoading);
-    //     this.isLoading = isLoading;
-    //   }
-    // }
   }
 };
 </script>
